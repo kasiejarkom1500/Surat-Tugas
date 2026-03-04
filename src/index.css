@@ -1,0 +1,242 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cambria", "Times New Roman", serif;
+}
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    @apply bg-slate-200 font-sans p-5 flex justify-center gap-5;
+  }
+}
+
+@layer components {
+  /* ======== PANEL INPUT ======== */
+  .container-panel {
+    @apply w-[380px] shrink-0;
+  }
+
+  .form-section {
+    @apply bg-white p-5 rounded-lg shadow-md sticky top-5 max-h-[95vh] overflow-y-auto;
+  }
+
+  .header-form h3 { @apply mb-1 text-lg font-bold; }
+  .header-form p  { @apply mb-3 text-xs text-gray-500; }
+
+  /* TAB */
+  .tab-nav {
+    @apply flex gap-1.5 mb-3.5 border-b-2 border-slate-200 pb-2;
+  }
+
+  .tab-btn {
+    @apply flex-1 p-1.5 border border-slate-300 rounded bg-slate-50 cursor-pointer text-xs font-bold text-slate-600 transition-colors;
+  }
+
+  .tab-btn.active {
+    @apply bg-blue-600 text-white border-blue-600;
+  }
+
+  .tab-content { @apply hidden; }
+  .tab-content.active { @apply block; }
+
+  /* FORM GROUP */
+  .form-group { @apply mb-3; }
+
+  .form-group label {
+    @apply text-xs font-bold block mb-1;
+  }
+
+  .form-group small { @apply text-[10px] text-red-500; }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    @apply w-full p-2 border border-gray-300 rounded text-sm;
+  }
+
+  /* PESERTA ROW (form) */
+  .peserta-row {
+    @apply bg-slate-50 border border-slate-200 rounded-md p-2.5 mb-2.5 relative;
+  }
+
+  .peserta-row .row-num {
+    @apply font-bold text-xs text-blue-600 mb-1.5;
+  }
+
+  .peserta-row input {
+    @apply w-full p-1.5 border border-gray-300 rounded text-xs mb-1;
+  }
+
+  .peserta-row .lbl-field {
+    @apply text-[11px] text-gray-600 mb-0.5 block;
+  }
+
+  .btn-hapus {
+    @apply absolute top-2 right-2 bg-red-400 text-white border-none rounded px-2 py-1 text-[11px] cursor-pointer;
+  }
+
+  .btn-add {
+    @apply w-full p-2 bg-green-400 border-none rounded font-bold cursor-pointer mt-1 text-sm;
+  }
+
+  /* BUTTONS */
+  .btn-area {
+    @apply flex gap-2.5 mt-4;
+  }
+
+  .btn-area button {
+    @apply flex-1 p-2.5 border-none rounded cursor-pointer font-bold;
+  }
+
+  .btn-print { @apply bg-blue-600 text-white; }
+  .btn-wa    { @apply bg-green-500 text-white; }
+
+  /* ======== KERTAS A4 ======== */
+  .paper {
+    @apply bg-white w-[210mm] min-h-[297mm] p-[1.5cm_2cm_2cm_2.5cm] shadow-xl font-serif text-[11pt] leading-snug;
+  }
+
+  /* Jarak antar halaman di layar */
+  .page-break {
+    @apply mt-4;
+  }
+
+  /* KOP */
+  .kop {
+    @apply text-center mb-1;
+  }
+
+  .kop img {
+    @apply w-[75px] mb-2 mx-auto;
+  }
+
+  .kop-text h2 {
+    @apply text-[14pt] font-bold uppercase leading-normal;
+  }
+
+  .garis-kop {
+    @apply border-t-3 border-black border-b border-black my-1.5 mb-3;
+  }
+
+  /* JUDUL */
+  .judul {
+    @apply text-center my-3 mb-4;
+  }
+
+  .judul h3 {
+    @apply text-[12pt] font-bold uppercase;
+  }
+
+  /* TABEL UTAMA */
+  .main-table {
+    @apply w-full border-collapse;
+  }
+
+  .main-table td {
+    @apply align-top pb-1;
+  }
+
+  .col-label { @apply w-[100px]; }
+  .col-sep    { width: 6px; }
+  .text-justify { @apply text-justify; }
+
+  .list-uu {
+  margin: 0;
+  padding-left: 3px;
+  }
+
+  .list-uu li { @apply mb-0.5; }
+
+  /* SUB JUDUL */
+  .sub-judul {
+    @apply text-center font-bold my-2.5;
+  }
+
+  /* INNER TABLE */
+  .inner-table { @apply w-full; }
+  .lbl-inner   { @apply w-[130px]; }
+
+  /* TTD */
+  .ttd-area {
+    @apply mt-8 flex justify-end;
+  }
+
+  .ttd-content {
+    @apply text-center w-[280px];
+  }
+
+  .ttd-jabatan { @apply leading-normal; }
+  .ttd-nama    { @apply font-bold; }
+
+  /* ======== LAMPIRAN ======== */
+  .lampiran-header {
+    @apply mb-4;
+  }
+
+  .lampiran-meta { @apply border-collapse; }
+  .lampiran-meta td { @apply p-[1px_4px_1px_0] text-[10.5pt] align-top; }
+  .lm-label { @apply w-[110px]; }
+  .lm-sep   { @apply w-[12px]; }
+
+  .lampiran-judul-wrap {
+    @apply text-center my-3 mb-2.5;
+  }
+
+  .lampiran-judul-text {
+    @apply text-[12pt] font-bold uppercase;
+  }
+
+  .lampiran-subjudul-text {
+    @apply text-[11pt] font-bold;
+  }
+
+  /* TABEL PESERTA */
+  .tabel-peserta {
+    @apply w-full border-collapse text-[9.5pt] mt-2;
+  }
+
+  .tabel-peserta th,
+  .tabel-peserta td {
+    @apply border border-black p-[4px_6px] align-middle text-left;
+  }
+
+  .tabel-peserta th {
+    @apply bg-gray-100 text-center font-bold text-[9pt];
+  }
+
+  .tabel-peserta tbody tr:nth-child(even) {
+    @apply bg-gray-50;
+  }
+
+  .th-no { @apply w-[28px] text-center; }
+  .td-no { @apply text-center; }
+}
+
+/* ======== PRINT ======== */
+@media print {
+  body {
+    @apply bg-white p-0 m-0 block;
+  }
+
+  .no-print { @apply !hidden; }
+
+  .paper {
+    @apply w-full min-h-0 shadow-none p-[1.5cm_2cm_2cm_2.5cm];
+  }
+
+  .page-break {
+    page-break-before: always;
+    @apply mt-0;
+  }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+}
