@@ -1,0 +1,5 @@
+{
+  "name": "Surat Tugas BPS Jambi & Arsip Digital",
+  "description": "Aplikasi pembuatan Surat Tugas BPS Provinsi Jambi dengan fitur cetak, kirim WhatsApp, dan pengarsipan digital.",
+  "requestFramePermissions": []
+}

@@ -5,6 +5,8 @@
 
 import React, { useState, useEffect } from 'react';
 
+const DRIVE_FOLDER_URL = "https://drive.google.com/drive/u/0/folders/1VdQsiSeO8dV-En0M5-CBkDpxNivbzO1K";
+
 interface Peserta {
   nama: string;
   nip: string;
@@ -12,6 +14,21 @@ interface Peserta {
   jabatan: string;
   unitKerja: string;
   keterangan: string;
+}
+
+function buildFileName(formData: any, kepadaMode: string, pesertaList: Peserta[]) {
+  const nomorRaw = formData.nomor ? formData.nomor.replace(/\//g, '-') : 'XXX';
+  const kode = `ST-B-${nomorRaw}-15000-KP311-2026`;
+  let subjek = '';
+  if (kepadaMode === 'personal') {
+    subjek = formData.nama ? formData.nama.trim().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9\-]/g, '').substring(0, 40) : 'Pegawai';
+  } else {
+    const first = pesertaList[0]?.nama;
+    const slug = first ? first.trim().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9\-]/g, '').substring(0, 30) : 'Peserta';
+    const more = pesertaList.length > 1 ? `+${pesertaList.length - 1}` : '';
+    subjek = slug + more;
+  }
+  return `${kode}_${subjek}`;
 }
 
 export default function App() {
@@ -31,7 +48,7 @@ export default function App() {
     waktu: '',
     tempat: 'Jambi',
     tanggal: '',
-    pejabat: 'Aidil Adha, S.E., M.E.',
+    pejabat: 'Aidil Adha', // Default without titles as requested
     lampiranJudul: 'Daftar Nama Peserta Pelatihan',
     lampiranSubjudul: '',
   });
@@ -40,9 +57,27 @@ export default function App() {
     { nama: '', nip: '', pangkat: '', jabatan: '', unitKerja: '', keterangan: '' }
   ]);
 
+  // Auto-numbering logic
+  useEffect(() => {
+    const lastNum = localStorage.getItem('last_st_number');
+    const lastYear = localStorage.getItem('last_st_year');
+    const currentYear = new Date().getFullYear().toString();
+    
+    if (lastYear !== currentYear) {
+      setFormData(prev => ({ ...prev, nomor: '001' }));
+      localStorage.setItem('last_st_year', currentYear);
+      localStorage.setItem('last_st_number', '001');
+    } else if (lastNum && !formData.nomor) {
+      setFormData(prev => ({ ...prev, nomor: lastNum }));
+    }
+  }, []);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
     setFormData(prev => ({ ...prev, [id]: value }));
+    if (id === 'nomor') {
+      localStorage.setItem('last_st_number', value);
+    }
   };
 
   const updatePeserta = (idx: number, field: keyof Peserta, value: string) => {
@@ -64,18 +99,51 @@ export default function App() {
     setPesertaList(newList);
   };
 
+  const handlePrint = () => {
+    const prevTitle = document.title;
+    document.title = buildFileName(formData, kepadaMode, pesertaList);
+    window.print();
+    setTimeout(() => { document.title = prevTitle; }, 1000);
+  };
+
   const sendWA = () => {
-    const nomor = formData.nomor;
+    const nomor = `B-${formData.nomor}`;
     const nama = kepadaMode === 'personal' ? formData.nama : 'Daftar Terlampir';
-    const phone = "6285261523510";
+    const phone = "6285123174464";
     const text = `*SURAT TUGAS BARU*\n\nNomor: ${nomor}/15000/KP.311/2026\nKepada: ${nama}\n\nMohon dicek.`;
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
   };
 
-  const nomorFull = formData.nomor ? `${formData.nomor}/15000/KP.311/2026` : '...';
+  const incrementNomor = () => {
+    const current = formData.nomor;
+    // Handle sisipan like 101.1
+    if (current.includes('.')) {
+      const parts = current.split('.');
+      const lastPart = parseInt(parts[parts.length - 1]);
+      if (!isNaN(lastPart)) {
+        parts[parts.length - 1] = (lastPart + 1).toString();
+        const next = parts.join('.');
+        setFormData(prev => ({ ...prev, nomor: next }));
+        localStorage.setItem('last_st_number', next);
+        return;
+      }
+    }
+    
+    const num = parseInt(current);
+    if (!isNaN(num)) {
+      const next = (num + 1).toString().padStart(3, '0');
+      setFormData(prev => ({ ...prev, nomor: next }));
+      localStorage.setItem('last_st_number', next);
+    } else {
+      setFormData(prev => ({ ...prev, nomor: '001' }));
+      localStorage.setItem('last_st_number', '001');
+    }
+  };
+
+  const nomorFull = formData.nomor ? `B-${formData.nomor}/15000/KP.311/2026` : '...';
 
   return (
-    <div className="flex flex-col md:flex-row gap-5 w-full max-w-7xl mx-auto">
+    <div className="flex flex-col md:flex-row gap-5 w-full max-w-7xl mx-auto p-4 justify-center items-start">
       {/* ======== PANEL INPUT ======== */}
       <div className="no-print container-panel">
         <div className="form-section">
@@ -104,8 +172,12 @@ export default function App() {
           <div className={`tab-content ${activeTab === 'hal1' ? 'active' : ''}`}>
             <div className="form-group">
               <label>Nomor Surat (Bagian Depan)</label>
-              <input type="text" id="nomor" value={formData.nomor} onChange={handleInputChange} />
-              <small>Format: NOMOR [Input]/15000/KP.311/2026</small>
+              <div className="flex gap-2">
+                <div className="flex items-center bg-gray-100 px-2 border border-r-0 rounded-l text-sm font-bold">B-</div>
+                <input type="text" id="nomor" value={formData.nomor} onChange={handleInputChange} className="!rounded-l-none !rounded-r-none" placeholder="001" />
+                <button onClick={incrementNomor} className="bg-blue-500 text-white px-3 rounded-r text-sm font-bold" title="Nomor Berikutnya">+</button>
+              </div>
+              <small>Format: B-[Input]/15000/KP.311/2026</small>
             </div>
             <div className="form-group">
               <label>Menimbang</label>
@@ -158,7 +230,7 @@ export default function App() {
             </div>
             <div className="form-group">
               <label>Tanggal Penetapan</label>
-              <input type="text" id="tanggal" value={formData.tanggal} onChange={handleInputChange} />
+              <input type="text" id="tanggal" value={formData.tanggal} onChange={handleInputChange} placeholder="cth: 1 Januari 2026" />
             </div>
             <div className="form-group">
               <label>Nama Kepala (Penanda Tangan)</label>
@@ -179,7 +251,7 @@ export default function App() {
             <div className="form-group">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" checked={showKeterangan} onChange={(e) => setShowKeterangan(e.target.checked)} />
-                <span>Tampilkan Kolom <b>Keterangan</b></span>
+                <span className="text-xs">Tampilkan Kolom <b>Keterangan</b></span>
               </label>
             </div>
 
@@ -199,17 +271,17 @@ export default function App() {
                   <label className="lbl-field">Unit Kerja</label>
                   <input type="text" value={p.unitKerja} placeholder="Unit Kerja" onChange={(e) => updatePeserta(i, 'unitKerja', e.target.value)} />
                   {showKeterangan && (
-                <div>
-                  <label className="lbl-field">Keterangan</label>
-                  <textarea
-                    rows={3}
-                    value={p.keterangan}
-                    placeholder="Keterangan"
-                    onChange={(e) => updatePeserta(i, 'keterangan', e.target.value)}
-                    className="w-full border p-2 resize-none"
-                  />
-                </div>
-              )}
+                    <div>
+                      <label className="lbl-field">Keterangan</label>
+                      <textarea
+                        rows={2}
+                        value={p.keterangan}
+                        placeholder="Keterangan"
+                        onChange={(e) => updatePeserta(i, 'keterangan', e.target.value)}
+                        className="w-full border p-1.5 text-xs resize-none rounded"
+                      />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -217,17 +289,19 @@ export default function App() {
           </div>
 
           <div className="btn-area">
-            <button onClick={() => window.print()} className="btn-print">🖨️ Cetak / Simpan PDF</button>
+            <button onClick={handlePrint} className="btn-print">🖨️ Cetak / Simpan PDF</button>
             <button onClick={sendWA} className="btn-wa">📱 Kirim WA</button>
+            <button onClick={() => window.open(DRIVE_FOLDER_URL, '_blank')} className="btn-arsip">📁 Kirim Arsip</button>
           </div>
         </div>
       </div>
 
-      {/* ============================ HALAMAN 1 - SURAT TUGAS ============================= */}
-      <div className="flex flex-col gap-5">
+      {/* ============================ PREVIEW AREA ============================= */}
+      <div className="flex flex-col gap-5 preview-container">
+        {/* HALAMAN 1 - SURAT TUGAS */}
         <div className="paper" id="halaman1">
           <div className="kop">
-            <img src="logo-bps.png" alt="Logo BPS" referrerPolicy="no-referrer" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/28/Lambang_Badan_Pusat_Statistik_%28BPS%29_Indonesia.svg" alt="Logo BPS" referrerPolicy="no-referrer" />
             <div className="kop-text">
               <h2>BADAN PUSAT STATISTIK<br />PROVINSI JAMBI</h2>
             </div>
@@ -235,7 +309,7 @@ export default function App() {
 
           <div className="judul">
             <h3>SURAT TUGAS</h3>
-            <p>Nomor {formData.nomor && `${formData.nomor}/`}15000/KP.311/2026</p> 
+            <p>Nomor {nomorFull}</p> 
           </div>
 
           <table className="main-table">
@@ -250,16 +324,16 @@ export default function App() {
               <tr>
                 <td className="col-label">Mengingat</td>
                 <td className="col-sep">:</td>
-                <td className="col-content text-justify">
-                  <ol className="list-uu">
-                    <li>1. Undang-Undang Republik Indonesia Nomor 16 Tahun 1997 tentang Statistik;</li>
-                    <li>2. Peraturan Pemerintah Nomor 51 Tahun 1999 tentang Penyelenggaraan Statistik;</li>
-                    <li>3. Peraturan Presiden Nomor 86 Tahun 2007 tentang Badan Pusat Statistik;</li>
-                    <li>4. Peraturan Badan Pusat Statistik Nomor 2 Tahun 2025 tentang Organisasi dan Tata Kerja Badan Pusat Statistik;</li>
-                    <li>5. Peraturan Badan Pusat Statistik Nomor 3 Tahun 2025 tentang Organisasi dan Tata Kerja Badan Pusat Statistik Provinsi dan Kabupaten/Kota;</li>
-                    <li>6. Peraturan Menteri Keuangan Nomor 49 Tahun 2023 tentang Standar Biaya Masukan;</li>
-                    <li>7. Peraturan Badan Pusat Statistik Nomor 1 Tahun 2023 tentang Tata Naskah Dinas.</li>
-                  </ol>
+                <td className="col-content">
+                  <ul className="list-uu">
+                    <li><span>1.</span><span>Undang-Undang Republik Indonesia Nomor 16 Tahun 1997 tentang Statistik;</span></li>
+                    <li><span>2.</span><span>Peraturan Pemerintah Nomor 51 Tahun 1999 tentang Penyelenggaraan Statistik;</span></li>
+                    <li><span>3.</span><span>Peraturan Presiden Nomor 86 Tahun 2007 tentang Badan Pusat Statistik;</span></li>
+                    <li><span>4.</span><span>Peraturan Badan Pusat Statistik Nomor 2 Tahun 2025 tentang Organisasi dan Tata Kerja Badan Pusat Statistik;</span></li>
+                    <li><span>5.</span><span>Peraturan Badan Pusat Statistik Nomor 3 Tahun 2025 tentang Organisasi dan Tata Kerja Badan Pusat Statistik Provinsi dan Kabupaten/Kota;</span></li>
+                    <li><span>6.</span><span>Peraturan Menteri Keuangan Nomor 49 Tahun 2023 tentang Standar Biaya Masukan;</span></li>
+                    <li><span>7.</span><span>Peraturan Badan Pusat Statistik Nomor 1 Tahun 2023 tentang Tata Naskah Dinas.</span></li>
+                  </ul>
                 </td>
               </tr>
             </tbody>
@@ -312,15 +386,14 @@ export default function App() {
                 <span>{formData.tempat || 'Jambi'}</span>,&nbsp;<span>{formData.tanggal || '...'}</span>
               </div>
               <div className="ttd-jabatan">Kepala Badan Pusat Statistik<br />Provinsi Jambi</div>
-              <br /><br /><br />
-              <div className="ttd-nama">{formData.pejabat || 'Aidil Adha, S.E., M.E.'}</div>
+              <div className="h-20"></div>
+              <div className="ttd-nama">{formData.pejabat || 'Aidil Adha'}</div>
             </div>
           </div>
         </div>
 
-        {/* ============================ HALAMAN 2 - LAMPIRAN ============================= */}
+        {/* HALAMAN 2 - LAMPIRAN */}
         <div className="paper page-break" id="halaman2">
-          {/* HEADER LAMPIRAN */}
           <div className="lampiran-header">
             <table className="lampiran-meta">
               <tbody>
@@ -343,7 +416,6 @@ export default function App() {
             <div className="lampiran-subjudul-text">{formData.lampiranSubjudul}</div>
           </div>
 
-          {/* TABEL PESERTA */}
           <table className="tabel-peserta" id="tabel-peserta">
             <thead>
               <tr>
@@ -365,25 +437,20 @@ export default function App() {
                   <td>{p.pangkat || '...'}</td>
                   <td>{p.jabatan || '...'}</td>
                   <td>{p.unitKerja || '...'}</td>
-                  {showKeterangan && (
-                  <td className="th-keterangan whitespace-pre-line">
-                    {p.keterangan}
-                  </td>
-                )}
-                </tr>
-              ))}
+              {showKeterangan && (
+                  <td className="whitespace-pre-line">
+              {p.keterangan}
+            </td>
+           )}
+        </tr>
+     ))}
             </tbody>
           </table>
 
-          {/* TTD LAMPIRAN */}
-          <div className="ttd-area !mt-5">
+          <div className="ttd-area !mt-12">
             <div className="ttd-content">
-              <div className="ttd-date">
-                <span>{formData.tempat || 'Jambi'}</span>,&nbsp;<span>{formData.tanggal || '...'}</span>
-              </div>
-              <div className="ttd-jabatan">Kepala Badan Pusat Statistik<br />Provinsi Jambi</div>
-              <br /><br /><br />
-              <div className="ttd-nama">{formData.pejabat || 'Aidil Adha, S.E., M.E.'}</div>
+              <div className="h-24"></div>
+              <div className="ttd-nama">{formData.pejabat || 'Aidil Adha'}</div>
             </div>
           </div>
         </div>
