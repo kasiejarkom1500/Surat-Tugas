@@ -291,6 +291,5 @@
 
   .page-break {
     @apply mt-0;
-    /* page-break-before: always; */ /* Removed to prevent double page break */
   }
 }

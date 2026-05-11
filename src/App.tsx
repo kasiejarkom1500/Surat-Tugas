@@ -422,12 +422,12 @@ export default function App() {
               {pesertaList.map((p, i) => (
                 <tr key={i}>
                   <td className="td-no">{i + 1}</td>
-                  <td>{p.nama || '...'}</td>
+                  <td className="!text-left">{p.nama || '...'}</td>
                   <td>{p.nip || '...'}</td>
                   <td>{p.pangkat || '...'}</td>
-                  <td>{p.jabatan || '...'}</td>
-                  <td>{p.unitKerja || '...'}</td>
-                  {showKeterangan && <td className="whitespace-pre-line">{p.keterangan}</td>}
+                  <td className="!text-left">{p.jabatan || '...'}</td>
+                  <td className="!text-left">{p.unitKerja || '...'}</td>
+                  {showKeterangan && <td className="whitespace-pre-line text-left">{p.keterangan}</td>}
                 </tr>
               ))}
             </tbody>
@@ -436,4 +436,4 @@ export default function App() {
       </div>
     </div>
   );
-}
+} 
