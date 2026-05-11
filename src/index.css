@@ -234,7 +234,7 @@
 @media print {
   @page {
     size: A4;
-    margin: 0;
+    margin: 1cm 1.5cm 1.5cm 2cm;
   }
 
   body {
@@ -257,15 +257,34 @@
 
   .paper {
     @apply shadow-none m-0;
-    width: 210mm;
-    height: 297mm; /* Force exact A4 height */
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    padding: 0;
     page-break-after: always;
     break-after: page;
     box-shadow: none !important;
     overflow: hidden;
   }
 
+  /* Halaman lampiran boleh overflow ke halaman baru */
+  .paper.page-break {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  /* Beri jarak atas saat tabel berlanjut ke halaman baru */
+  .tabel-peserta thead tr th {
+    padding-top: 16px;
+  }
+
   tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .tabel-peserta tr {
     page-break-inside: avoid;
     break-inside: avoid;
   }
