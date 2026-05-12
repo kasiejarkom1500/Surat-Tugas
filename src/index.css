@@ -107,7 +107,7 @@
     @apply bg-white shadow-xl font-serif text-[11pt] leading-snug;
     width: 210mm;
     min-height: 297mm;
-    padding: 1cm 1.5cm 1.5cm 2cm;
+    padding: 1.5cm 2cm 2cm 3cm; /* Adjusted for standard BPS margins */
     box-sizing: border-box;
     position: relative;
     overflow: hidden;
@@ -191,9 +191,11 @@
     @apply mb-4;
   }
 
-  .lampiran-meta { @apply border-collapse; }
+  .lampiran-meta { @apply text-right; }
+  .lampiran-meta div { @apply text-left; }
+  .lampiran-meta table { @apply inline-table; }
   .lampiran-meta td { @apply p-[1px_4px_1px_0] text-[10.5pt] align-top; }
-  .lm-label { @apply w-[110px]; }
+  .lm-label { @apply w-[70px]; }
   .lm-sep   { @apply w-[12px]; }
 
   .lampiran-judul-wrap {
@@ -220,10 +222,6 @@
 
   .tabel-peserta th {
     @apply bg-gray-100 text-center font-bold text-[9pt];
-  }
-
-  .tabel-peserta tbody tr:nth-child(even) {
-    @apply bg-gray-50;
   }
 
   .th-no { @apply w-[28px] text-center; }
@@ -258,11 +256,22 @@
   .paper {
     @apply shadow-none m-0;
     width: 210mm;
-    height: 297mm; /* Force exact A4 height */
+    height: 297mm;
+    padding: 1.5cm 2cm 2cm 3cm !important;
     page-break-after: always;
     break-after: page;
     box-shadow: none !important;
     overflow: hidden;
+  }
+
+  .paper.page-break {
+    height: auto;
+    min-height: 297mm;
+    overflow: visible;
+  }
+
+  .tabel-peserta thead tr th {
+    padding-top: 16px;
   }
 
   tr {
@@ -272,6 +281,6 @@
 
   .page-break {
     @apply mt-0;
-    /* page-break-before: always; */ /* Removed to prevent double page break */
   }
 }
+

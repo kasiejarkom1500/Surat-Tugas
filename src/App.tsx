@@ -3,7 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React, { useState, useEffect } from 'react';
+import { dropdownOptions } from './data/dropdownOptions';
 
 const DRIVE_FOLDER_URL = "https://drive.google.com/drive/folders/1YvkYGynLeXFkk9ITB5RV5Xq4LFmOmvls";
 
@@ -35,10 +41,10 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'hal1' | 'hal2'>('hal1');
   const [kepadaMode, setKepadaMode] = useState<'personal' | 'lampiran'>('personal');
   const [showKeterangan, setShowKeterangan] = useState(false);
-  
+ 
   const [formData, setFormData] = useState({
     nomor: '',
-    menimbang: '',
+    menimbang: 'Bahwa dalam Rangka Kegiatan',
     nama: '',
     nip: '',
     pangkat: '',
@@ -48,7 +54,7 @@ export default function App() {
     waktu: '',
     tempat: 'Jambi',
     tanggal: '',
-    pejabat: 'Aidil Adha', // Default without titles as requested
+    pejabat: 'Aidil Adha',
     lampiranJudul: 'Daftar Nama Peserta Pelatihan',
     lampiranSubjudul: '',
   });
@@ -62,7 +68,7 @@ export default function App() {
     const lastNum = localStorage.getItem('last_st_number');
     const lastYear = localStorage.getItem('last_st_year');
     const currentYear = new Date().getFullYear().toString();
-    
+   
     if (lastYear !== currentYear) {
       setFormData(prev => ({ ...prev, nomor: '001' }));
       localStorage.setItem('last_st_year', currentYear);
@@ -116,7 +122,6 @@ export default function App() {
 
   const incrementNomor = () => {
     const current = formData.nomor;
-    // Handle sisipan like 101.1
     if (current.includes('.')) {
       const parts = current.split('.');
       const lastPart = parseInt(parts[parts.length - 1]);
@@ -128,7 +133,7 @@ export default function App() {
         return;
       }
     }
-    
+   
     const num = parseInt(current);
     if (!isNaN(num)) {
       const next = (num + 1).toString().padStart(3, '0');
@@ -148,22 +153,16 @@ export default function App() {
       <div className="no-print container-panel">
         <div className="form-section">
           <div className="header-form">
-            <h3>Surat Tugas</h3>
+            <h3 className="text-slate-800">Surat Tugas</h3>
             <p>Isi data di bawah ini, preview akan otomatis berubah.</p>
           </div>
 
           {/* TAB NAVIGATION */}
           <div className="tab-nav">
-            <button 
-              className={`tab-btn ${activeTab === 'hal1' ? 'active' : ''}`} 
-              onClick={() => setActiveTab('hal1')}
-            >
+            <button className={`tab-btn ${activeTab === 'hal1' ? 'active' : ''}`} onClick={() => setActiveTab('hal1')}>
               📄 Halaman 1
             </button>
-            <button 
-              className={`tab-btn ${activeTab === 'hal2' ? 'active' : ''}`} 
-              onClick={() => setActiveTab('hal2')}
-            >
+            <button className={`tab-btn ${activeTab === 'hal2' ? 'active' : ''}`} onClick={() => setActiveTab('hal2')}>
               📋 Lampiran
             </button>
           </div>
@@ -175,14 +174,16 @@ export default function App() {
               <div className="flex gap-2">
                 <div className="flex items-center bg-gray-100 px-2 border border-r-0 rounded-l text-sm font-bold">B-</div>
                 <input type="text" id="nomor" value={formData.nomor} onChange={handleInputChange} className="!rounded-l-none !rounded-r-none" placeholder="001" />
-                <button onClick={incrementNomor} className="bg-blue-500 text-white px-3 rounded-r text-sm font-bold" title="Nomor Berikutnya">+</button>
+                <button onClick={incrementNomor} className="bg-blue-600 text-white px-3 rounded-r text-sm font-bold hover:bg-blue-700 transition-colors" title="Nomor Berikutnya">+</button>
               </div>
               <small>Format: B-[Input]/15000/KP.311/2026</small>
             </div>
+
             <div className="form-group">
               <label>Menimbang</label>
               <textarea id="menimbang" rows={5} value={formData.menimbang} onChange={handleInputChange}></textarea>
             </div>
+
             <div className="form-group">
               <label>Kepada</label>
               <select id="kepada-mode" value={kepadaMode} onChange={(e) => setKepadaMode(e.target.value as any)}>
@@ -190,28 +191,38 @@ export default function App() {
                 <option value="lampiran">Daftar Terlampir</option>
               </select>
             </div>
-            
+           
             {kepadaMode === 'personal' && (
               <div id="kepada-personal">
                 <div className="form-group">
                   <label>Nama Pegawai</label>
-                  <input type="text" id="nama" value={formData.nama} onChange={handleInputChange} />
+                  <input type="text" id="nama" value={formData.nama} onChange={handleInputChange} placeholder="Ketik Nama Pegawai" />
                 </div>
                 <div className="form-group">
                   <label>NIP</label>
-                  <input type="text" id="nip" value={formData.nip} onChange={handleInputChange} />
+                  <input type="text" id="nip" value={formData.nip} onChange={handleInputChange} placeholder="NIP" />
                 </div>
                 <div className="form-group">
                   <label>Pangkat / Golongan</label>
-                  <input type="text" id="pangkat" value={formData.pangkat} onChange={handleInputChange} />
+                  <select id="pangkat" value={formData.pangkat} onChange={handleInputChange}>
+                    <option value="">-- Pilih Pangkat / Golongan --</option>
+                    {dropdownOptions.pangkat.map((p, i) => (
+                      <option key={i} value={p}>{p}</option>
+                    ))}
+                  </select>
                 </div>
                 <div className="form-group">
                   <label>Jabatan</label>
-                  <input type="text" id="jabatan" value={formData.jabatan} onChange={handleInputChange} />
+                  <select id="jabatan" value={formData.jabatan} onChange={handleInputChange}>
+                    <option value="">-- Pilih Jabatan --</option>
+                    {dropdownOptions.jabatan.map((j, i) => (
+                      <option key={i} value={j}>{j}</option>
+                    ))}
+                  </select>
                 </div>
                 <div className="form-group">
                   <label>Unit Kerja</label>
-                  <input type="text" id="unitKerja" value={formData.unitKerja} onChange={handleInputChange} />
+                  <input type="text" id="unitKerja" value={formData.unitKerja} onChange={handleInputChange} placeholder="Contoh: SDM & Hukum" />
                 </div>
               </div>
             )}
@@ -230,7 +241,7 @@ export default function App() {
             </div>
             <div className="form-group">
               <label>Tanggal Penetapan</label>
-              <input type="text" id="tanggal" value={formData.tanggal} onChange={handleInputChange} placeholder="cth: 1 Januari 2026" />
+              <input type="text" id="tanggal" value={formData.tanggal} onChange={handleInputChange} placeholder="cth: 21 April s.d 15 Mei" />
             </div>
             <div className="form-group">
               <label>Nama Kepala (Penanda Tangan)</label>
@@ -259,7 +270,7 @@ export default function App() {
               {pesertaList.map((p, i) => (
                 <div key={i} className="peserta-row">
                   <div className="row-num">Peserta {i + 1}</div>
-                  <button className="btn-hapus" onClick={() => hapusPeserta(i)}>✕ Hapus</button>
+                  <button className="btn-hapus hover:bg-red-500" onClick={() => hapusPeserta(i)}>✕ Hapus</button>
                   <label className="lbl-field">Nama</label>
                   <input type="text" value={p.nama} placeholder="Nama lengkap" onChange={(e) => updatePeserta(i, 'nama', e.target.value)} />
                   <label className="lbl-field">NIP</label>
@@ -273,25 +284,19 @@ export default function App() {
                   {showKeterangan && (
                     <div>
                       <label className="lbl-field">Keterangan</label>
-                      <textarea
-                        rows={2}
-                        value={p.keterangan}
-                        placeholder="Keterangan"
-                        onChange={(e) => updatePeserta(i, 'keterangan', e.target.value)}
-                        className="w-full border p-1.5 text-xs resize-none rounded"
-                      />
+                      <textarea rows={2} value={p.keterangan} placeholder="Keterangan" onChange={(e) => updatePeserta(i, 'keterangan', e.target.value)} className="w-full border p-1.5 text-xs resize-none rounded bg-white shadow-inner" />
                     </div>
                   )}
                 </div>
               ))}
             </div>
-            <button onClick={tambahPeserta} className="btn-add">➕ Tambah Peserta</button>
+            <button onClick={tambahPeserta} className="btn-add hover:bg-green-500 transition-colors">➕ Tambah Peserta</button>
           </div>
 
           <div className="btn-area">
-            <button onClick={handlePrint} className="btn-print">🖨️ Cetak / Simpan PDF</button>
-            <button onClick={sendWA} className="btn-wa">📱 Kirim WA</button>
-            <button onClick={() => window.open(DRIVE_FOLDER_URL, '_blank')} className="btn-arsip">📁 Kirim Arsip</button>
+            <button onClick={handlePrint} className="btn-print hover:bg-blue-700 transition-colors">🖨️ Cetak / Simpan PDF</button>
+            <button onClick={sendWA} className="btn-wa hover:bg-green-600 transition-colors">📱 Kirim WA</button>
+            <button onClick={() => window.open(DRIVE_FOLDER_URL, '_blank')} className="btn-arsip hover:bg-orange-600 transition-colors">📁 Kirim Arsip</button>
           </div>
         </div>
       </div>
@@ -306,20 +311,16 @@ export default function App() {
               <h2>BADAN PUSAT STATISTIK<br />PROVINSI JAMBI</h2>
             </div>
           </div>
-
           <div className="judul">
             <h3>SURAT TUGAS</h3>
-            <p>Nomor {nomorFull}</p> 
+            <p>Nomor {nomorFull}</p>
           </div>
-
           <table className="main-table">
             <tbody>
               <tr>
                 <td className="col-label">Menimbang</td>
                 <td className="col-sep">:</td>
-                <td className="col-content text-justify">
-                  <span>{formData.menimbang || '...'}</span>
-                </td>
+                <td className="col-content text-justify"><span>{formData.menimbang || '...'}</span></td>
               </tr>
               <tr>
                 <td className="col-label">Mengingat</td>
@@ -338,9 +339,7 @@ export default function App() {
               </tr>
             </tbody>
           </table>
-
           <div className="sub-judul">Menugaskan</div>
-
           <table className="main-table">
             <tbody>
               {kepadaMode === 'personal' ? (
@@ -366,7 +365,6 @@ export default function App() {
                   <td className="col-content">Daftar Terlampir</td>
                 </tr>
               )}
-
               <tr>
                 <td className="col-label">Untuk</td>
                 <td className="col-sep">:</td>
@@ -379,14 +377,13 @@ export default function App() {
               </tr>
             </tbody>
           </table>
-
           <div className="ttd-area">
             <div className="ttd-content">
               <div className="ttd-date">
                 <span>{formData.tempat || 'Jambi'}</span>,&nbsp;<span>{formData.tanggal || '...'}</span>
               </div>
               <div className="ttd-jabatan">Kepala Badan Pusat Statistik<br />Provinsi Jambi</div>
-              <div className="h-20"></div>
+              <div className="h-24"></div>
               <div className="ttd-nama">{formData.pejabat || 'Aidil Adha'}</div>
             </div>
           </div>
@@ -395,34 +392,35 @@ export default function App() {
         {/* HALAMAN 2 - LAMPIRAN */}
         <div className="paper page-break" id="halaman2">
           <div className="lampiran-header flex justify-end">
-            <table className="lampiran-meta">
-              <tbody>
-                <tr>
-                  <td className="lm-label">Lampiran Surat</td>
-                  <td className="lm-sep">:</td>
-                  <td>Nomor <span>{nomorFull}</span></td>
-                </tr>
-                <tr>
-                  <td className="lm-label">Tanggal</td>
-                  <td className="lm-sep">:</td>
-                  <td><span>{formData.tanggal || '...'}</span></td>
-                </tr>
-              </tbody>
-            </table>
+            <div className="lampiran-meta">
+              <div className="font-serif !text-left">Lampiran</div>
+              <table className="border-collapse">
+                <tbody>
+                  <tr>
+                    <td className="lm-label">Nomor</td>
+                    <td className="lm-sep">:</td>
+                    <td className="text-left font-serif whitespace-nowrap"><span>{nomorFull}</span></td>
+                  </tr>
+                  <tr>
+                    <td className="lm-label">Tanggal</td>
+                    <td className="lm-sep">:</td>
+                    <td className="text-left font-serif whitespace-nowrap"><span>{formData.tanggal || '...'}</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-
           <div className="lampiran-judul-wrap">
             <div className="lampiran-judul-text">{formData.lampiranJudul || 'Daftar Nama Peserta Pelatihan'}</div>
             <div className="lampiran-subjudul-text">{formData.lampiranSubjudul}</div>
           </div>
-
           <table className="tabel-peserta" id="tabel-peserta">
             <thead>
               <tr>
                 <th className="th-no">No.</th>
                 <th>Nama</th>
                 <th>NIP</th>
-                <th>Pangkat/<br />Golongan</th>
+                <th>Pangkat /<br />Golongan</th>
                 <th>Jabatan</th>
                 <th>Unit<br />Kerja</th>
                 {showKeterangan && <th className="th-keterangan">Keterangan</th>}
@@ -432,18 +430,14 @@ export default function App() {
               {pesertaList.map((p, i) => (
                 <tr key={i}>
                   <td className="td-no">{i + 1}</td>
-                  <td>{p.nama || '...'}</td>
+                  <td className="!text-left">{p.nama || '...'}</td>
                   <td>{p.nip || '...'}</td>
                   <td>{p.pangkat || '...'}</td>
-                  <td>{p.jabatan || '...'}</td>
-                  <td>{p.unitKerja || '...'}</td>
-              {showKeterangan && (
-                  <td className="whitespace-pre-line">
-              {p.keterangan}
-            </td>
-           )}
-        </tr>
-     ))}
+                  <td className="!text-left">{p.jabatan || '...'}</td>
+                  <td className="!text-left">{p.unitKerja || '...'}</td>
+                  {showKeterangan && <td className="whitespace-pre-line text-left">{p.keterangan}</td>}
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
