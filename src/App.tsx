@@ -64,6 +64,7 @@ export default function App() {
   ]);
 
   // Auto-numbering logic
+  // Edit to push for deployment
   useEffect(() => {
     const lastNum = localStorage.getItem('last_st_number');
     const lastYear = localStorage.getItem('last_st_year');
