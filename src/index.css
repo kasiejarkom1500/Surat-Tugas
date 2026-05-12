@@ -191,7 +191,7 @@
     @apply mb-4;
   }
 
-  .lampiran-meta { @apply text-right; }
+  .lampiran-meta { @apply text-left; }
   .lampiran-meta div { @apply text-left; }
   .lampiran-meta table { @apply inline-table; }
   .lampiran-meta td { @apply p-[1px_4px_1px_0] text-[10.5pt] align-top; }
