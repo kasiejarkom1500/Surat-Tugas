@@ -3,6 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React, { useState, useEffect } from 'react';
 import { dropdownOptions } from './data/dropdownOptions';
 
@@ -148,7 +153,7 @@ export default function App() {
       <div className="no-print container-panel">
         <div className="form-section">
           <div className="header-form">
-            <h3>Surat Tugas</h3>
+            <h3 className="text-slate-800">Surat Tugas</h3>
             <p>Isi data di bawah ini, preview akan otomatis berubah.</p>
           </div>
 
@@ -169,7 +174,7 @@ export default function App() {
               <div className="flex gap-2">
                 <div className="flex items-center bg-gray-100 px-2 border border-r-0 rounded-l text-sm font-bold">B-</div>
                 <input type="text" id="nomor" value={formData.nomor} onChange={handleInputChange} className="!rounded-l-none !rounded-r-none" placeholder="001" />
-                <button onClick={incrementNomor} className="bg-blue-500 text-white px-3 rounded-r text-sm font-bold" title="Nomor Berikutnya">+</button>
+                <button onClick={incrementNomor} className="bg-blue-600 text-white px-3 rounded-r text-sm font-bold hover:bg-blue-700 transition-colors" title="Nomor Berikutnya">+</button>
               </div>
               <small>Format: B-[Input]/15000/KP.311/2026</small>
             </div>
@@ -265,7 +270,7 @@ export default function App() {
               {pesertaList.map((p, i) => (
                 <div key={i} className="peserta-row">
                   <div className="row-num">Peserta {i + 1}</div>
-                  <button className="btn-hapus" onClick={() => hapusPeserta(i)}>✕ Hapus</button>
+                  <button className="btn-hapus hover:bg-red-500" onClick={() => hapusPeserta(i)}>✕ Hapus</button>
                   <label className="lbl-field">Nama</label>
                   <input type="text" value={p.nama} placeholder="Nama lengkap" onChange={(e) => updatePeserta(i, 'nama', e.target.value)} />
                   <label className="lbl-field">NIP</label>
@@ -279,19 +284,19 @@ export default function App() {
                   {showKeterangan && (
                     <div>
                       <label className="lbl-field">Keterangan</label>
-                      <textarea rows={2} value={p.keterangan} placeholder="Keterangan" onChange={(e) => updatePeserta(i, 'keterangan', e.target.value)} className="w-full border p-1.5 text-xs resize-none rounded" />
+                      <textarea rows={2} value={p.keterangan} placeholder="Keterangan" onChange={(e) => updatePeserta(i, 'keterangan', e.target.value)} className="w-full border p-1.5 text-xs resize-none rounded bg-white shadow-inner" />
                     </div>
                   )}
                 </div>
               ))}
             </div>
-            <button onClick={tambahPeserta} className="btn-add">➕ Tambah Peserta</button>
+            <button onClick={tambahPeserta} className="btn-add hover:bg-green-500 transition-colors">➕ Tambah Peserta</button>
           </div>
 
           <div className="btn-area">
-            <button onClick={handlePrint} className="btn-print">🖨️ Cetak / Simpan PDF</button>
-            <button onClick={sendWA} className="btn-wa">📱 Kirim WA</button>
-            <button onClick={() => window.open(DRIVE_FOLDER_URL, '_blank')} className="btn-arsip">📁 Kirim Arsip</button>
+            <button onClick={handlePrint} className="btn-print hover:bg-blue-700 transition-colors">🖨️ Cetak / Simpan PDF</button>
+            <button onClick={sendWA} className="btn-wa hover:bg-green-600 transition-colors">📱 Kirim WA</button>
+            <button onClick={() => window.open(DRIVE_FOLDER_URL, '_blank')} className="btn-arsip hover:bg-orange-600 transition-colors">📁 Kirim Arsip</button>
           </div>
         </div>
       </div>
@@ -378,7 +383,7 @@ export default function App() {
                 <span>{formData.tempat || 'Jambi'}</span>,&nbsp;<span>{formData.tanggal || '...'}</span>
               </div>
               <div className="ttd-jabatan">Kepala Badan Pusat Statistik<br />Provinsi Jambi</div>
-              <div className="h-20"></div>
+              <div className="h-24"></div>
               <div className="ttd-nama">{formData.pejabat || 'Aidil Adha'}</div>
             </div>
           </div>
@@ -387,20 +392,23 @@ export default function App() {
         {/* HALAMAN 2 - LAMPIRAN */}
         <div className="paper page-break" id="halaman2">
           <div className="lampiran-header flex justify-end">
-            <table className="lampiran-meta">
-              <tbody>
-                <tr>
-                  <td className="lm-label">Lampiran Surat</td>
-                  <td className="lm-sep">:</td>
-                  <td>Nomor <span>{nomorFull}</span></td>
-                </tr>
-                <tr>
-                  <td className="lm-label">Tanggal</td>
-                  <td className="lm-sep">:</td>
-                  <td><span>{formData.tanggal || '...'}</span></td>
-                </tr>
-              </tbody>
-            </table>
+            <div className="lampiran-meta">
+              <div className="font-serif !text-left">Lampiran</div>
+              <table className="border-collapse">
+                <tbody>
+                  <tr>
+                    <td className="lm-label">Nomor</td>
+                    <td className="lm-sep">:</td>
+                    <td className="text-left font-serif whitespace-nowrap"><span>{nomorFull}</span></td>
+                  </tr>
+                  <tr>
+                    <td className="lm-label">Tanggal</td>
+                    <td className="lm-sep">:</td>
+                    <td className="text-left font-serif whitespace-nowrap"><span>{formData.tanggal || '...'}</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
           <div className="lampiran-judul-wrap">
             <div className="lampiran-judul-text">{formData.lampiranJudul || 'Daftar Nama Peserta Pelatihan'}</div>
@@ -412,7 +420,7 @@ export default function App() {
                 <th className="th-no">No.</th>
                 <th>Nama</th>
                 <th>NIP</th>
-                <th>Pangkat/<br />Golongan</th>
+                <th>Pangkat /<br />Golongan</th>
                 <th>Jabatan</th>
                 <th>Unit<br />Kerja</th>
                 {showKeterangan && <th className="th-keterangan">Keterangan</th>}
@@ -436,4 +444,4 @@ export default function App() {
       </div>
     </div>
   );
-} 
+}
