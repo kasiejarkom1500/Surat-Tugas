@@ -1,12 +1,33 @@
 // src/data/dropdownOptions.ts
 export const dropdownOptions = {
   pangkat: [
-    "IV.d", "IV.c", "IV.b", "IV.a",
-    "III.d", "III.c", "III.b", "III.a",
-    "II.d", "II.c", "II.b", "II.a",
-    "V", "IX", "VII", "III", 
-    // Tambahkan kalau ada yang baru
-  ].sort((a, b) => a.localeCompare(b)),
+    // Golongan I - Juru
+    "Juru Muda (I/a)",
+    "Juru Muda Tingkat I (I/b)",
+    "Juru (I/c)",
+    "Juru Tingkat I (I/d)",
+    // Golongan II - Pengatur
+    "Pengatur Muda (II/a)",
+    "Pengatur Muda Tingkat I (II/b)",
+    "Pengatur (II/c)",
+    "Pengatur Tingkat I (II/d)",
+    // Golongan III - Penata
+    "Penata Muda (III/a)",
+    "Penata Muda Tingkat I (III/b)",
+    "Penata (III/c)",
+    "Penata Tingkat I (III/d)",
+    // Golongan IV - Pembina
+    "Pembina (IV/a)",
+    "Pembina Tingkat I (IV/b)",
+    "Pembina Muda (IV/c)",
+    "Pembina Madya (IV/d)",
+    "Pembina Utama (IV/e)",
+    // Lainnya
+    "III",
+    "V",
+    "VIII",
+    "IX",
+  ],
 
   jabatan: [
     "Kepala",
@@ -32,6 +53,5 @@ export const dropdownOptions = {
     "Pengelola PBJ Ahli Muda",
     "PPPK/Operator Layanan Operasional",
     "CPNS/Statistisi Ahli Pertama",
-    // Tambah baru di sini
   ].sort((a, b) => a.localeCompare(b)),
 };
