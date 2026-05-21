@@ -54,7 +54,7 @@ export default function App() {
     waktu: '',
     tempat: 'Jambi',
     tanggal: '',
-    pejabat: 'Aidil Adha',
+    pejabat: 'AIDIL ADHA',
     lampiranJudul: 'Daftar Nama Peserta Pelatihan',
     lampiranSubjudul: '',
   });
