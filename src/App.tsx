@@ -331,10 +331,10 @@ export default function App() {
                     <li><span>1.</span><span>Undang-Undang Republik Indonesia Nomor 16 Tahun 1997 tentang Statistik;</span></li>
                     <li><span>2.</span><span>Peraturan Pemerintah Nomor 51 Tahun 1999 tentang Penyelenggaraan Statistik;</span></li>
                     <li><span>3.</span><span>Peraturan Presiden Nomor 86 Tahun 2007 tentang Badan Pusat Statistik;</span></li>
-                    <li><span>4.</span><span>Peraturan Badan Pusat Statistik Nomor 2 Tahun 2025 tentang Organisasi dan Tata Kerja Badan Pusat Statistik;</span></li>
-                    <li><span>5.</span><span>Peraturan Badan Pusat Statistik Nomor 3 Tahun 2025 tentang Organisasi dan Tata Kerja Badan Pusat Statistik Provinsi dan Kabupaten/Kota;</span></li>
-                    <li><span>6.</span><span>Peraturan Menteri Keuangan Nomor 49 Tahun 2023 tentang Standar Biaya Masukan;</span></li>
-                    <li><span>7.</span><span>Peraturan Badan Pusat Statistik Nomor 1 Tahun 2023 tentang Tata Naskah Dinas.</span></li>
+                    <li><span>4.</span><span>Peraturan Menteri Keuangan Republik Indonesia Nomor 32 Tahun 2025 tentang Standar Biaya Masukan Tahun Anggaran 2026;</span></li>
+                    <li><span>5.</span><span>Peraturan Badan Pusat Statistik Nomor 1 Tahun 2023 tentang Tata Naskah Dinas di Lingkungan Badan Pusat Statistik;</span></li>
+                    <li><span>6.</span><span>Peraturan Badan Pusat Statistik Nomor 2 Tahun 2025 tentang Organisasi dan Tata Kerja Badan Pusat Statistik; dan </span></li>
+                    <li><span>7.</span><span>Peraturan Badan Pusat Statistik Nomor 3 Tahun 2025 tentang tentang Organisasi dan Tata Kerja Badan Pusat Statistik Provinsi dan Badan Pusat Statistik Kabupaten/Kota.</span></li>
                   </ul>
                 </td>
               </tr>
